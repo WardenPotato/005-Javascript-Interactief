@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link href="https://fonts.googleapis.com/css?family=Copse" rel="stylesheet">
+</head>
+<body>
+<style>
+    body{
+        font-family: 'Copse', serif;
+        text-align: center;
+    }
+    div.picture-holder{
+        box-sizing: border-box;
+        height: 300px;
+        width: 300px;
+        float: left;
+        border: solid 1px black;
+    }
+    #memory{
+        width: 900px;
+        width: 1800px;
+        border: solid 1px black;
+        font-size: 0;
+        margin: auto;
+    }
+</style>
+<h1 id="winloss">Correct: 0 Wrong: 0</h1>
+<div id="memory">
+
+</div>
+<script>
+
+    memory = document.getElementById("memory");
+    var randomNumbers = randomArray();
+    var winningID = [];
+    createPicsHolders();
+    var selected1 = "";
+    var selected2= "";
+    var correct = 0;
+    var wrong = 0;
+    var canClick = true;
+    function countInArray(array, what) {
+        var count = 0;
+        for (var i = 0; i < array.length; i++) {
+            if (array[i] === what) {
+                count++;
+            }
+        }
+        return count;
+    }
+    function randomArray() {
+        var random = 0;
+        var inputArray = [];
+        while(inputArray.length < 18){
+            random = Math.floor(Math.random() * 9) + 1;
+            if(countInArray(inputArray, random) < 2){
+                inputArray.push(random);
+            }
+        }
+        return inputArray;
+    }
+    function createPicsHolders() {
+        for(var i=0; i<18; i++) {
+            pictureHolder = document.createElement("div");
+            pictureHolder.className = "picture-holder";
+            pictureHolder.id = i;
+            pictureHolder.aap = randomNumbers[pictureHolder.id];
+            pictureHolder.style.backgroundImage = 'none';
+            pictureHolder.addEventListener("click", function () {
+                console.log("Click");
+                if(countInArray(winningID, this.id) === 0 && canClick === true){
+                    if(this.style.backgroundImage === 'none'){
+                        this.style.backgroundImage="url('img/aap" + randomNumbers[this.id] + ".jpg')";
+                    }else if(selected1 != this.id){
+                        this.style.backgroundImage='none';
+                    }
+                    if(selected1 == ""){
+                        selected1 = this.id;
+                    }else if(selected2 == "" && selected1 != this.id){
+                        selected2 = this.id;
+                        if(randomNumbers[selected1] == randomNumbers[selected2] && selected1 != "" && selected2 != ""){
+                            winningID.push(selected1, selected2);
+                            console.log("Winner winner");
+                            hideAll();
+                            correct++;
+                            document.getElementById("winloss").innerText = "Correct: " + correct + " Wrong: " + wrong;
+                        }else if(selected1 != "" && selected2 != ""){
+                            console.log("Wrong");
+                            canClick = false;
+                            window.setTimeout(hideAll, 500);
+                            wrong++;
+                            document.getElementById("winloss").innerText = "Correct: " + correct + " Wrong: " + wrong;
+                        }
+                    }
+                }
+            });
+            memory.appendChild(pictureHolder);
+        }
+    }
+    function hideAll() {
+        selected1 = "";
+        selected2 = "";
+        pictureHolders = document.getElementsByClassName("picture-holder");
+        for(var i=0; i<pictureHolders.length; i++) {
+            if(countInArray(winningID ,pictureHolders[i].id) == 0){
+                pictureHolders[i].style.backgroundImage = 'none';
+            }
+        }
+        canClick = true;
+    }
+</script>
+</body>
+</html>
